@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  postgresdb:
+    image: postgres:14.1-alpine
+    volumes:
+      - db_pers:/var/lib/postgrespers
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: mr
+  api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - .:/urs/src/app
+      - /usr/src/app/node_modules
+    container_name: api
+    expose:
+      - '3000'
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgresdb
+    command: npm run start:debug
+
+volumes:
+  db_pers: {}
